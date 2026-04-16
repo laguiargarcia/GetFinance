@@ -1,7 +1,7 @@
 import pytest
 import re
 from pyspark.sql import Row
-from pyspark.sql.functions import col, current_timestamp, lit
+from pyspark.sql.functions import col, current_timestamp
 from pyspark.sql.types import DoubleType, DateType
 
 
