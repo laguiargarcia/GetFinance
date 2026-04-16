@@ -2,20 +2,27 @@ import requests
 import time
 import os
 from dotenv import load_dotenv
+from pyspark.sql import SparkSession
+from delta import configure_spark_with_delta_pip
 
 load_dotenv()
 
 _api_token = None
 _api_token_created_at = 0
 
-
-spark = SparkSession.builder.appName("meuApp").getOrCreate()
-
-
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 ITEMS_ID = [item.strip() for item in os.getenv("ITEM_IDS", "").split(",") if item.strip()]
-from pyspark.sql import SparkSession
+
+_builder = (
+    SparkSession.builder.appName("meuApp")
+    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
+    .config(
+        "spark.sql.catalog.spark_catalog",
+        "org.apache.spark.sql.delta.catalog.DeltaCatalog",
+    )
+)
+spark = configure_spark_with_delta_pip(_builder).getOrCreate()
 
 
 def get_api_token():
@@ -26,16 +33,8 @@ def get_api_token():
         return _api_token
 
     url = "https://api.pluggy.ai/auth"
-
-    body = {
-        "clientId": CLIENT_ID,
-        "clientSecret": CLIENT_SECRET
-    }
-
-    headers = {
-        "accept": "application/json",
-        "content-type": "application/json"
-    }
+    body = {"clientId": CLIENT_ID, "clientSecret": CLIENT_SECRET}
+    headers = {"accept": "application/json", "content-type": "application/json"}
 
     response = requests.post(url, json=body, headers=headers)
 
@@ -50,16 +49,25 @@ def get_api_token():
 
 def list_accounts(item_id):
     token = get_api_token()
-
     url = f"https://api.pluggy.ai/accounts?itemId={item_id}"
-    headers = {
-        "accept": "application/json",
-        "X-API-KEY": f"{token}"
-    }
+    headers = {"accept": "application/json", "X-API-KEY": token}
 
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         return response.json()
     else:
-        print(f"Failed to get account: {response.status_code} - {response.text}")
+        print(f"Failed to get accounts: {response.status_code} - {response.text}")
+        return None
+
+
+def list_transactions(account_id):
+    token = get_api_token()
+    url = f"https://api.pluggy.ai/transactions?accountId={account_id}"
+    headers = {"accept": "application/json", "X-API-KEY": token}
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Failed to get transactions: {response.status_code} - {response.text}")
         return None
