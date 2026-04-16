@@ -4,12 +4,15 @@ from pathlib import Path
 
 BASE_SCRIPTS = [
     "functions.py",
-    "dataBase.py"
+    "storage.py",
 ]
 
 PIPELINE = [
-    "etl/raw2cleansed.py"
+    "etl/raw2raw.py",
+    "etl/raw2cleansed.py",
+    "etl/cleansed2curated.py",
 ]
+
 
 def build_combined_code(target_script: str) -> str:
     parts = []
@@ -17,6 +20,7 @@ def build_combined_code(target_script: str) -> str:
         code = Path(path).read_text(encoding="utf-8")
         parts.append(f"# {'='*40}\n# {path}\n# {'='*40}\n{code}\n")
     return "\n".join(parts)
+
 
 def run_step(script: str) -> None:
     print(f"\n{'='*50}")
@@ -36,8 +40,8 @@ def run_step(script: str) -> None:
 
     print(f"✔ Concluído: {script}")
 
+
 if __name__ == "__main__":
-    # Valida existência de todos os arquivos antes de começar
     all_scripts = BASE_SCRIPTS + PIPELINE
     for script in all_scripts:
         if not Path(script).exists():
