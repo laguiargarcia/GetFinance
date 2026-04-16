@@ -49,6 +49,9 @@ def get_api_token():
 
 def list_accounts(item_id):
     token = get_api_token()
+    if token is None:
+        print("list_accounts: skipped — no valid API token")
+        return None
     url = f"https://api.pluggy.ai/accounts?itemId={item_id}"
     headers = {"accept": "application/json", "X-API-KEY": token}
 
@@ -62,6 +65,9 @@ def list_accounts(item_id):
 
 def list_transactions(account_id):
     token = get_api_token()
+    if token is None:
+        print("list_transactions: skipped — no valid API token")
+        return None
     url = f"https://api.pluggy.ai/transactions?accountId={account_id}"
     headers = {"accept": "application/json", "X-API-KEY": token}
 
