@@ -1,0 +1,13 @@
+print("=" * 50)
+print("curated/accounts (placeholder)")
+print("=" * 50)
+accounts = read_delta("data/cleansed/accounts")
+accounts.printSchema()
+accounts.show(5, truncate=False)
+
+print("=" * 50)
+print("curated/transactions (placeholder)")
+print("=" * 50)
+transactions = read_delta("data/cleansed/transactions")
+transactions.printSchema()
+transactions.show(5, truncate=False)
