@@ -8,9 +8,9 @@ BASE_SCRIPTS = [
 ]
 
 PIPELINE = [
-    "etl/raw2raw.py",
-    "etl/raw2cleansed.py",
-    "etl/cleansed2curated.py",
+    "etl/landing2raw.py",
+    #"etl/raw2cleansed.py",
+    #"etl/cleansed2curated.py",
 ]
 
 

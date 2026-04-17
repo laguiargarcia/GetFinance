@@ -77,3 +77,15 @@ def list_transactions(account_id):
     else:
         print(f"Failed to get transactions: {response.status_code} - {response.text}")
         return None
+
+
+def delta_to_csv(delta_path, csv_path):
+    import shutil
+    df = spark.read.format("delta").load(delta_path)
+    tmp_path = csv_path + "_tmp"
+    df.coalesce(1).write.mode("overwrite").option("header", "true").csv(tmp_path)
+    part_file = next(
+        f for f in os.listdir(tmp_path) if f.startswith("part-") and f.endswith(".csv")
+    )
+    shutil.move(os.path.join(tmp_path, part_file), csv_path)
+    shutil.rmtree(tmp_path)
