@@ -1,0 +1,9 @@
+{
+  "sqltools.connections": [
+    {
+      "name": "GetFinance",
+      "driver": "DuckDB",
+      "database": "${workspaceFolder}/getfinance.duckdb"
+    }
+  ]
+}
