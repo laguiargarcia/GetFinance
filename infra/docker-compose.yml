@@ -1,0 +1,35 @@
+networks:
+  getfinance:
+
+volumes:
+  superset_home:
+
+services:
+  fastapi:
+    build:
+      context: ..
+      dockerfile: infra/fastapi/Dockerfile
+    volumes:
+      - ../api/api.py:/app/api.py:ro
+      - ../data:/app/data:ro
+    ports:
+      - "8000:8000"
+    networks: [getfinance]
+
+  superset:
+    build:
+      context: ..
+      dockerfile: infra/superset/Dockerfile
+    environment:
+      SUPERSET_SECRET_KEY: "${SUPERSET_SECRET_KEY}"
+      PYTHONPATH: /app/pythonpath
+      ADMIN_USERNAME: "${SUPERSET_ADMIN_USERNAME:-admin}"
+      ADMIN_PASSWORD: "${SUPERSET_ADMIN_PASSWORD:-admin}"
+      ADMIN_EMAIL: "${SUPERSET_ADMIN_EMAIL:-admin@getfinance.local}"
+    volumes:
+      - superset_home:/app/superset_home
+      - ./superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+      - ../data:/app/data
+    ports:
+      - "8088:8088"
+    networks: [getfinance]
