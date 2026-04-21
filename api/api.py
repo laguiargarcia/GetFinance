@@ -1,7 +1,7 @@
 import io
 import duckdb
 from fastapi import FastAPI, Query
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from datetime import date
 from typing import Optional
 from pydantic import BaseModel
@@ -168,5 +168,7 @@ def run_query(req: QueryRequest):
         cols = [d[0] for d in rel.description]
         rows = rel.fetchall()
         return {"columns": cols, "rows": [list(r) for r in rows]}
+    except duckdb.Error as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
     except Exception as e:
-        return {"error": str(e)}
+        return JSONResponse(status_code=500, content={"error": "Internal server error"})
