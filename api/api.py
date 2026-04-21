@@ -4,6 +4,7 @@ from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse
 from datetime import date
 from typing import Optional
+from pydantic import BaseModel
 
 app = FastAPI(title="GetFinance Export API")
 
@@ -153,3 +154,19 @@ def list_categories():
         f"SELECT DISTINCT category, COUNT(*) as count FROM delta_scan('{TRANSACTIONS_PATH}') GROUP BY category ORDER BY count DESC"
     ).fetchall()
     return [{"category": r[0], "count": r[1]} for r in rows]
+
+
+class QueryRequest(BaseModel):
+    sql: str
+
+
+@app.post("/query")
+def run_query(req: QueryRequest):
+    try:
+        con = get_con()
+        rel = con.execute(req.sql)
+        cols = [d[0] for d in rel.description]
+        rows = rel.fetchall()
+        return {"columns": cols, "rows": [list(r) for r in rows]}
+    except Exception as e:
+        return {"error": str(e)}
