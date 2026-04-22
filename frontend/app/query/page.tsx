@@ -14,7 +14,7 @@ function escapeCsv(value: unknown): string {
 }
 
 const DEFAULT_SQL = `SELECT date, description, amount, category
-FROM delta_scan('etl/data/cleansed/transactions')
+FROM delta_scan('{transactions}')
 ORDER BY date DESC
 LIMIT 20`;
 

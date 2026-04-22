@@ -174,9 +174,12 @@ class QueryRequest(BaseModel):
 
 @app.post("/query")
 def run_query(req: QueryRequest):
+    sql = (req.sql
+           .replace("{transactions}", TRANSACTIONS_PATH)
+           .replace("{accounts}", ACCOUNTS_PATH))
     try:
         con = get_con()
-        rel = con.execute(req.sql)
+        rel = con.execute(sql)
         cols = [d[0] for d in rel.description]
         rows = rel.fetchall()
         return {"columns": cols, "rows": [list(r) for r in rows]}
