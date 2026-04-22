@@ -1,4 +1,12 @@
 venv/
 .env
 infra/.env
-data/docs/
+docs/
+data/
+etl/data/
+exports/
+csv/
+*.parquet
+*.crc
+__pycache__/
+*.pyc
