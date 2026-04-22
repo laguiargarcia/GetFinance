@@ -5,6 +5,14 @@ import ResultTable from "@/components/ResultTable";
 import { runQuery } from "@/lib/api";
 import type { QueryResult } from "@/lib/types";
 
+function escapeCsv(value: unknown): string {
+  const str = String(value ?? "");
+  if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
 const DEFAULT_SQL = `SELECT date, description, amount, category
 FROM delta_scan('data/cleansed/transactions')
 ORDER BY date DESC
@@ -29,9 +37,9 @@ export default function QueryPage() {
 
   function exportCsv() {
     if (!result || result.error || result.rows.length === 0) return;
-    const lines = [result.columns.join(",")];
+    const lines = [result.columns.map(escapeCsv).join(",")];
     for (const row of result.rows) {
-      lines.push(row.map((c) => (c === null ? "" : String(c))).join(","));
+      lines.push(row.map(escapeCsv).join(","));
     }
     const blob = new Blob([lines.join("\n")], { type: "text/csv" });
     const url = URL.createObjectURL(blob);

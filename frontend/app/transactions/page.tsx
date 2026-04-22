@@ -17,7 +17,7 @@ export default function TransactionsPage() {
   useEffect(() => {
     fetchCategories()
       .then((data) => setCategories(data.map((c) => c.category)))
-      .catch(() => {});
+      .catch((e) => console.error("Failed to load categories:", e));
   }, []);
 
   async function handleFilter(newFilters: TransactionFilters) {

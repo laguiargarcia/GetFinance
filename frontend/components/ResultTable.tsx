@@ -20,7 +20,7 @@ export default function ResultTable({ columns, rows }: Props) {
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i} className="border-t border-gray-800 hover:bg-gray-900">
+            <tr key={`${i}-${row.map(String).join("-")}`} className="border-t border-gray-800 hover:bg-gray-900">
               {row.map((cell, j) => (
                 <td key={j} className="px-3 py-2 font-mono whitespace-nowrap">
                   {cell === null ? <span className="text-gray-600">null</span> : String(cell)}

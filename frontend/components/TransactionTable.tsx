@@ -29,8 +29,10 @@ export default function TransactionTable({ transactions }: Props) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((tx, i) => (
-              <tr key={i} className="border-t border-gray-800 hover:bg-gray-900">
+            {rows.map((tx, i) => {
+              const globalIdx = page * PAGE_SIZE + i;
+              return (
+              <tr key={`${tx.date}-${tx.account_id}-${globalIdx}`} className="border-t border-gray-800 hover:bg-gray-900">
                 <td className="px-3 py-2 whitespace-nowrap">{tx.date}</td>
                 <td className="px-3 py-2 max-w-xs truncate">{tx.description}</td>
                 <td className={`px-3 py-2 font-mono whitespace-nowrap ${tx.amount < 0 ? "text-red-400" : "text-green-400"}`}>
@@ -40,7 +42,8 @@ export default function TransactionTable({ transactions }: Props) {
                 <td className="px-3 py-2">{tx.type}</td>
                 <td className="px-3 py-2 text-gray-400">{tx.status}</td>
               </tr>
-            ))}
+            );
+            })}
           </tbody>
         </table>
       </div>
