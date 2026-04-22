@@ -1,6 +1,7 @@
 import io
 import subprocess
 import sys
+import os
 import duckdb
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse, JSONResponse
@@ -18,8 +19,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-TRANSACTIONS_PATH = "data/cleansed/transactions"
-ACCOUNTS_PATH = "data/cleansed/accounts"
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TRANSACTIONS_PATH = os.path.join(_ROOT, "etl/data/cleansed/transactions")
+ACCOUNTS_PATH = os.path.join(_ROOT, "etl/data/cleansed/accounts")
 
 TRANSACTION_COLS = "date, description, amount, category, type, currency_code, account_id, status, operation_type"
 ACCOUNT_COLS = "id, name, number, balance, currency_code, type, subtype"
@@ -187,9 +189,11 @@ def run_query(req: QueryRequest):
 @app.post("/refresh")
 def refresh():
     result = subprocess.run(
-        ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace", "ingestion/main.ipynb"],
+        ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace",
+         os.path.join(_ROOT, "ingestion/main.ipynb")],
         capture_output=True,
         text=True,
+        cwd=_ROOT,
     )
     if result.returncode != 0:
         return JSONResponse(
