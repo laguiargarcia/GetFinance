@@ -184,23 +184,16 @@ def run_query(req: QueryRequest):
         return JSONResponse(status_code=500, content={"error": "Internal server error"})
 
 
-PIPELINE = [
-    "etl/landing2raw.ipynb",
-    "etl/raw2cleansed.ipynb",
-]
-
-
 @app.post("/refresh")
 def refresh():
-    for notebook in PIPELINE:
-        result = subprocess.run(
-            ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace", notebook],
-            capture_output=True,
-            text=True,
+    result = subprocess.run(
+        ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace", "ingestion/main.ipynb"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return JSONResponse(
+            status_code=500,
+            content={"error": "Pipeline falhou", "details": result.stderr},
         )
-        if result.returncode != 0:
-            return JSONResponse(
-                status_code=500,
-                content={"error": f"Pipeline falhou em '{notebook}'", "details": result.stderr},
-            )
     return {"status": "ok"}
