@@ -27,8 +27,9 @@ export default function FilterBar({ categories, onFilter }: Props) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap gap-3 items-end">
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-gray-400">De</label>
+        <label htmlFor="date-from" className="text-xs text-gray-400">De</label>
         <input
+          id="date-from"
           type="date"
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
@@ -36,8 +37,9 @@ export default function FilterBar({ categories, onFilter }: Props) {
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-gray-400">Até</label>
+        <label htmlFor="date-to" className="text-xs text-gray-400">Até</label>
         <input
+          id="date-to"
           type="date"
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
@@ -45,8 +47,9 @@ export default function FilterBar({ categories, onFilter }: Props) {
         />
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-gray-400">Categoria</label>
+        <label htmlFor="filter-category" className="text-xs text-gray-400">Categoria</label>
         <select
+          id="filter-category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="bg-gray-800 border border-gray-700 rounded px-3 py-1.5 text-sm text-white"
@@ -58,8 +61,9 @@ export default function FilterBar({ categories, onFilter }: Props) {
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-gray-400">Tipo</label>
+        <label htmlFor="filter-type" className="text-xs text-gray-400">Tipo</label>
         <select
+          id="filter-type"
           value={type}
           onChange={(e) => setType(e.target.value)}
           className="bg-gray-800 border border-gray-700 rounded px-3 py-1.5 text-sm text-white"

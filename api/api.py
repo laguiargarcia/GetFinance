@@ -1,4 +1,6 @@
 import io
+import subprocess
+import sys
 import duckdb
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse, JSONResponse
@@ -180,3 +182,25 @@ def run_query(req: QueryRequest):
         return JSONResponse(status_code=400, content={"error": str(e)})
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": "Internal server error"})
+
+
+PIPELINE = [
+    "etl/landing2raw.ipynb",
+    "etl/raw2cleansed.ipynb",
+]
+
+
+@app.post("/refresh")
+def refresh():
+    for notebook in PIPELINE:
+        result = subprocess.run(
+            ["jupyter", "nbconvert", "--to", "notebook", "--execute", "--inplace", notebook],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            return JSONResponse(
+                status_code=500,
+                content={"error": f"Pipeline falhou em '{notebook}'", "details": result.stderr},
+            )
+    return {"status": "ok"}

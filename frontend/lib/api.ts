@@ -1,6 +1,8 @@
+import type { TransactionFilters, Transaction, QueryResult } from "./types";
+
 const BASE = "http://localhost:8000";
 
-export async function fetchTransactions(filters: import("./types").TransactionFilters): Promise<import("./types").Transaction[]> {
+export async function fetchTransactions(filters: TransactionFilters): Promise<Transaction[]> {
   const params = new URLSearchParams();
   if (filters.date_from) params.set("date_from", filters.date_from);
   if (filters.date_to) params.set("date_to", filters.date_to);
@@ -19,7 +21,7 @@ export async function fetchCategories(): Promise<{ category: string; count: numb
   return res.json();
 }
 
-export function exportUrl(path: "transactions" | "accounts", filters: import("./types").TransactionFilters, format: string): string {
+export function exportUrl(path: "transactions" | "accounts", filters: TransactionFilters, format: string): string {
   const params = new URLSearchParams({ format });
   if (filters.date_from) params.set("date_from", filters.date_from);
   if (filters.date_to) params.set("date_to", filters.date_to);
@@ -28,7 +30,7 @@ export function exportUrl(path: "transactions" | "accounts", filters: import("./
   return `${BASE}/${path}?${params}`;
 }
 
-export async function runQuery(sql: string): Promise<import("./types").QueryResult> {
+export async function runQuery(sql: string): Promise<QueryResult> {
   const res = await fetch(`${BASE}/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
