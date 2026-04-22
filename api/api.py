@@ -2,11 +2,19 @@ import io
 import duckdb
 from fastapi import FastAPI, Query
 from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import date
 from typing import Optional
 from pydantic import BaseModel
 
 app = FastAPI(title="GetFinance Export API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 TRANSACTIONS_PATH = "data/cleansed/transactions"
 ACCOUNTS_PATH = "data/cleansed/accounts"
